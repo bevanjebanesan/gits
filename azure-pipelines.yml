@@ -2,24 +2,26 @@
 trigger:
 - main
 
-# Use an agent pool
-pool: agent
+# Use a Microsoft-hosted agent pool with Ubuntu
+pool:
+  vmImage: 'ubuntu-latest'  # You can also use 'windows-latest' or 'macos-latest'
 
 steps:
-# Set JAVA_HOME environment variable for Maven
-- script: |
-    echo "##vso[task.setvariable variable=JAVA_HOME]$(JAVA_HOME_11_X64)"
-  displayName: 'Set JAVA_HOME for Maven'
-
 # Maven Task for clean, compile, and package
 - task: Maven@4
   inputs:
-    mavenPomFile: 'pom.xml'
+    mavenPomFile: 'pom.xml'  # The location of your pom.xml file
     goals: 'clean compile package'  # Run clean, compile, and package in a single task
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    javaHomeOption: 'Path'  # Use the JAVA_HOME set in the previous step
+    publishJUnitResults: true  # Publish JUnit results
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'  # Location of test result files
+    javaHomeOption: 'JDKVersion'  # Use the JDK version set below
     mavenVersionOption: 'Default'  # Use the default Maven version
-    mavenAuthenticateFeed: false
-    effectivePomSkip: false
-    sonarQubeRunAnalysis: false
+    mavenAuthenticateFeed: false  # Do not authenticate Maven feed (if not needed)
+    effectivePomSkip: false  # Skip generating the effective POM (set to false if you want it)
+    sonarQubeRunAnalysis: false  # Do not run SonarQube analysis (set to true if needed)
+
+# Install JDK 1.11 (this ensures JDK 11 is available for the build)
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '1.11'  # Install JDK 11
+    jdkArchitecture: 'x64'  # Ensure x64 architecture is used
