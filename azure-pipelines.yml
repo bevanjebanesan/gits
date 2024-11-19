@@ -1,30 +1,27 @@
-# Maven
+# Trigger on the main branch
+trigger:
+- main
+
+# Use an agent pool
+pool: agent
+
+steps:
+# Maven Task for compile and package
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
-    goals: 'compile'
+    goals: 'clean compile package'  # Run clean, compile, and package in a single task
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    javaHomeOption: 'JDKVersion'
-    mavenVersionOption: 'Default'
+    javaHomeOption: 'JDKVersion'  # Automatically use the JDK version set below
+    mavenVersionOption: 'Default'  # Use the default Maven version
     mavenAuthenticateFeed: false
     effectivePomSkip: false
     sonarQubeRunAnalysis: false
 
-trigger:
-- main
-
-pool:
-  vmImage: ubuntu-latest
-
-steps:
-- task: Maven@3
+# Set JDK version and architecture
+- task: UseJavaVersion@0
   inputs:
-    mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.11'
+    versionSpec: '1.11'
     jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package'
+
