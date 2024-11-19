@@ -4,7 +4,7 @@ trigger:
 
 # Use a Microsoft-hosted agent pool with Ubuntu
 pool:
-  vmImage: 'ubuntu-latest'  # You can also use 'windows-latest' or 'macos-latest'
+  vmImage: agent_pool  # You can also use 'windows-latest' or 'macos-latest'
 
 steps:
 # Maven Task for clean, compile, and package
