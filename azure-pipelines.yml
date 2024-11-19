@@ -6,22 +6,20 @@ trigger:
 pool: agent
 
 steps:
-# Maven Task for compile and package
+# Set JAVA_HOME environment variable for Maven
+- script: |
+    echo "##vso[task.setvariable variable=JAVA_HOME]$(JAVA_HOME_11_X64)"
+  displayName: 'Set JAVA_HOME for Maven'
+
+# Maven Task for clean, compile, and package
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
     goals: 'clean compile package'  # Run clean, compile, and package in a single task
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    javaHomeOption: 'JDKVersion'  # Automatically use the JDK version set below
+    javaHomeOption: 'Path'  # Use the JAVA_HOME set in the previous step
     mavenVersionOption: 'Default'  # Use the default Maven version
     mavenAuthenticateFeed: false
     effectivePomSkip: false
     sonarQubeRunAnalysis: false
-
-# Set JDK version and architecture
-- task: UseJavaVersion@0
-  inputs:
-    versionSpec: '1.11'
-    jdkArchitectureOption: 'x64'
-
